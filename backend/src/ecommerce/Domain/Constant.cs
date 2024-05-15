@@ -6,11 +6,6 @@ namespace ecommerce.Domain
         {
             public static string Name = "ecommerce";
         }
-        public static class Url
-        {
-            public static string BookData = @"../../Solution Items/data/book.json";
-            public static string UserData = @"../../Solution Items/data/user.json";
-        }
         public static class ErrorMessage
         {
             public static string NotFoundMessage = "Could not find";

@@ -9,8 +9,6 @@ namespace ecommerce.Application
         {
             services.AddScoped<IUserService, UserService>();
 
-            services.AddScoped<IBookService, BookService>();
-
             services.AddSingleton<ICurrentTime, CurrentTime>();
 
             return services;
