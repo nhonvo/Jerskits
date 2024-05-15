@@ -35,7 +35,16 @@ namespace ecommerce.Web.Controller
         private readonly IUserService _userService = userWriteService;
         [HttpGet]
         public async Task<IActionResult> Get()
-            => Ok(await _userService.Profile());
+            => Ok(await _userService.Get());
+        [HttpPatch("/api/profile")]
+        public async Task<IActionResult> Update(UserUpdateRequest request, CancellationToken cancellationToken)
+        {
+            await _userService.Update(request, cancellationToken);
+            return NoContent();
+        }
+        [HttpGet("/api/profile")]
+        public async Task<IActionResult> Profile()
+            => Ok(await _userService.Get());
     }
     public class ProductsController(ApplicationDbContext context) : BaseController
     {
@@ -43,10 +52,6 @@ namespace ecommerce.Web.Controller
 
         [HttpGet]
         public async Task<IActionResult> Get()
-        {
-            List<Product> products = await _context.Products.ToListAsync();
-            System.Console.WriteLine(products);
-            return Ok(products);
-        }
+            => Ok(await _context.Products.ToListAsync());
     }
 }

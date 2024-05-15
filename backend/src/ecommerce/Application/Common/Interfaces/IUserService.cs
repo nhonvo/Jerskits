@@ -8,6 +8,7 @@ namespace ecommerce.Application.Common.Interfaces
         Task<UserDTO> Register(RegisterRequest request, CancellationToken token);
         void Logout();
         Task<string> Refresh();
-        Task<UserProfile> Profile();
+        Task<UserProfile> Get();
+        Task Update(UserUpdateRequest request, CancellationToken cancellationToken);
     }
 }

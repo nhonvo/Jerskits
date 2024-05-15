@@ -25,23 +25,23 @@ namespace ecommerce.Infrastructure.Data
             builder.Entity<User>().HasData(
                  new User
                  {
-                     Id = 1,
-                     FullName = "John Doe",
-                     UserName = "johndoe",
-                     Email = "johndoe@example.com",
-                     Password = "password123",
-                     SaveAddress = true,
-                     Address = "123 Main St",
-                     PostalCode = 12345,
-                     City = "City",
-                     State = "State",
-                     Country = "Country",
-                     FirstName = "John",
-                     LastName = "Doe",
-                     Avatar = "avatar.jpg",
-                     PhoneNumber = "1234567890",
-                     ContactEmail = "contact@example.com",
-                     Role = Role.Admin
+                    Id = 1,
+                    FullName = "John Doe",
+                    UserName = "johndoe",
+                    Email = "johndoe@example.com",
+                    Password = "password123",
+                    SaveAddress = true,
+                    Address = "123 Main St",
+                    PostalCode = 12345,
+                    City = "City",
+                    State = "State",
+                    Country = "Country",
+                    FirstName = "John",
+                    LastName = "Doe",
+                    Avatar = "avatar.jpg",
+                    PhoneNumber = "1234567890",
+                    ContactEmail = "contact@example.com",
+                    Role = Role.Admin
                  },
                 new User
                 {

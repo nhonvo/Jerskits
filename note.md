@@ -3,12 +3,12 @@
 step by step
 
 move be to c# code
+    - authen add cookies 
+    - refresh token api
 
 add docker, github pileline
 
 add more service refer evershop
-
-refactor source code (eg ts and c# stick together)
 
 host service to ec2, docker hub, (optional npm) 
 

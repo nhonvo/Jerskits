@@ -6,6 +6,7 @@ using ecommerce.Application.Common.Exceptions;
 using ecommerce.Application.Common.Interfaces;
 using ecommerce.Application.Common.Models.User;
 using ecommerce.Application.Common.Utilities;
+using ecommerce.Application.Repositories;
 using ecommerce.Infrastructure.Interface;
 
 namespace ecommerce.Application.Services
@@ -79,7 +80,7 @@ namespace ecommerce.Application.Services
             }
         }
 
-        public async Task<UserProfile> Profile()
+        public async Task<UserProfile> Get()
         {
             try
             {
@@ -159,6 +160,29 @@ namespace ecommerce.Application.Services
             _logger.LogInformation("Response: " + JsonSerializer.Serialize(response));
 
             return response;
+        }
+
+        public async Task Update(UserUpdateRequest request, CancellationToken cancellationToken)
+        {
+            string jwtCookie;
+            try
+            {
+                jwtCookie = _httpContextAccessor.HttpContext.Request.Cookies["acc"];
+            }
+            catch (Exception exception)
+            {
+                throw new UserFriendlyException(ErrorCode.Unauthorized, "user not logged in", $"Access token not found in cookies{exception.Message}");
+            }
+
+            var token = jwtCookie.Validate(_configuration.Jwt.Issuer,
+                _configuration.Jwt.Audience,
+                _configuration.Jwt.Key);
+            var userId = token.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+            var user = await _userRepository.GetByIdAsync(int.Parse(userId));
+            _mapper.Map(request, user);
+
+            await _unitOfWork.ExecuteTransactionAsync(() =>
+                _unitOfWork.UserRepository.Update(user), cancellationToken);
         }
     }
 }
