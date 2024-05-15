@@ -3,18 +3,21 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ecommerce.Infrastructure.Data;
 
 #nullable disable
 
-namespace ecommerce.Infrastructure
+namespace ecommerce.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240515065933_addFavorite")]
+    partial class addFavorite
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -123,7 +126,7 @@ namespace ecommerce.Infrastructure
 
                     b.HasKey("Id");
 
-                    b.ToTable("Deliveries");
+                    b.ToTable("Delivery");
                 });
 
             modelBuilder.Entity("ecommerce.Domain.Entities.DetailProduct", b =>
@@ -174,7 +177,7 @@ namespace ecommerce.Infrastructure
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Favorites");
+                    b.ToTable("Favorite");
                 });
 
             modelBuilder.Entity("ecommerce.Domain.Entities.Information", b =>
@@ -214,7 +217,7 @@ namespace ecommerce.Infrastructure
 
                     b.HasKey("Id");
 
-                    b.ToTable("Informations");
+                    b.ToTable("Information");
                 });
 
             modelBuilder.Entity("ecommerce.Domain.Entities.Order", b =>
@@ -260,7 +263,7 @@ namespace ecommerce.Infrastructure
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Orders");
+                    b.ToTable("Order");
                 });
 
             modelBuilder.Entity("ecommerce.Domain.Entities.OrderItem", b =>
@@ -286,7 +289,7 @@ namespace ecommerce.Infrastructure
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderItems");
+                    b.ToTable("OrderItem");
                 });
 
             modelBuilder.Entity("ecommerce.Domain.Entities.Payment", b =>

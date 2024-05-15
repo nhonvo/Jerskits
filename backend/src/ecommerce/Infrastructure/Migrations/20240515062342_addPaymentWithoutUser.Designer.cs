@@ -3,18 +3,21 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ecommerce.Infrastructure.Data;
 
 #nullable disable
 
-namespace ecommerce.Infrastructure
+namespace ecommerce.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240515062342_addPaymentWithoutUser")]
+    partial class addPaymentWithoutUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -104,28 +107,6 @@ namespace ecommerce.Infrastructure
                     b.ToTable("Book", (string)null);
                 });
 
-            modelBuilder.Entity("ecommerce.Domain.Entities.Delivery", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("ArriveTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Deliveries");
-                });
-
             modelBuilder.Entity("ecommerce.Domain.Entities.DetailProduct", b =>
                 {
                     b.Property<int>("Id")
@@ -152,141 +133,6 @@ namespace ecommerce.Infrastructure
                         .IsUnique();
 
                     b.ToTable("DetailProducts");
-                });
-
-            modelBuilder.Entity("ecommerce.Domain.Entities.Favorite", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Favorites");
-                });
-
-            modelBuilder.Entity("ecommerce.Domain.Entities.Information", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Address")
-                        .HasColumnType("text");
-
-                    b.Property<string>("City")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ContactEmail")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Country")
-                        .HasColumnType("text");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("text");
-
-                    b.Property<int>("PostalCode")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("State")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Informations");
-                });
-
-            modelBuilder.Entity("ecommerce.Domain.Entities.Order", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("DeliveryId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("InformationId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("OrderItemId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("OrderNumber")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PaymentId")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DeliveryId")
-                        .IsUnique();
-
-                    b.HasIndex("InformationId")
-                        .IsUnique();
-
-                    b.HasIndex("PaymentId")
-                        .IsUnique();
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("ecommerce.Domain.Entities.OrderItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("SubTotal")
-                        .HasColumnType("numeric");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("ecommerce.Domain.Entities.Payment", b =>
@@ -595,79 +441,6 @@ namespace ecommerce.Infrastructure
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("ecommerce.Domain.Entities.Favorite", b =>
-                {
-                    b.HasOne("ecommerce.Domain.Entities.Product", "Product")
-                        .WithMany("Favorites")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ecommerce.Domain.Entities.User", "User")
-                        .WithMany("Favorites")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("ecommerce.Domain.Entities.Order", b =>
-                {
-                    b.HasOne("ecommerce.Domain.Entities.Delivery", "Delivery")
-                        .WithOne("Order")
-                        .HasForeignKey("ecommerce.Domain.Entities.Order", "DeliveryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ecommerce.Domain.Entities.Information", "Information")
-                        .WithOne("Order")
-                        .HasForeignKey("ecommerce.Domain.Entities.Order", "InformationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ecommerce.Domain.Entities.PaymentWithoutUser", "Payment")
-                        .WithOne("Order")
-                        .HasForeignKey("ecommerce.Domain.Entities.Order", "PaymentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ecommerce.Domain.Entities.User", "User")
-                        .WithOne("Order")
-                        .HasForeignKey("ecommerce.Domain.Entities.Order", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Delivery");
-
-                    b.Navigation("Information");
-
-                    b.Navigation("Payment");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("ecommerce.Domain.Entities.OrderItem", b =>
-                {
-                    b.HasOne("ecommerce.Domain.Entities.Order", "Order")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ecommerce.Domain.Entities.Product", "Product")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Order");
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("ecommerce.Domain.Entities.Payment", b =>
                 {
                     b.HasOne("ecommerce.Domain.Entities.User", "User")
@@ -703,35 +476,11 @@ namespace ecommerce.Infrastructure
                     b.Navigation("BagItems");
                 });
 
-            modelBuilder.Entity("ecommerce.Domain.Entities.Delivery", b =>
-                {
-                    b.Navigation("Order");
-                });
-
-            modelBuilder.Entity("ecommerce.Domain.Entities.Information", b =>
-                {
-                    b.Navigation("Order");
-                });
-
-            modelBuilder.Entity("ecommerce.Domain.Entities.Order", b =>
-                {
-                    b.Navigation("OrderItems");
-                });
-
-            modelBuilder.Entity("ecommerce.Domain.Entities.PaymentWithoutUser", b =>
-                {
-                    b.Navigation("Order");
-                });
-
             modelBuilder.Entity("ecommerce.Domain.Entities.Product", b =>
                 {
                     b.Navigation("BagItems");
 
                     b.Navigation("DetailProduct");
-
-                    b.Navigation("Favorites");
-
-                    b.Navigation("OrderItems");
 
                     b.Navigation("Reviews");
                 });
@@ -739,10 +488,6 @@ namespace ecommerce.Infrastructure
             modelBuilder.Entity("ecommerce.Domain.Entities.User", b =>
                 {
                     b.Navigation("Bag");
-
-                    b.Navigation("Favorites");
-
-                    b.Navigation("Order");
 
                     b.Navigation("Payments");
 
