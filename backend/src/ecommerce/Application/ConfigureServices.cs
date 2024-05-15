@@ -11,8 +11,6 @@ namespace ecommerce.Application
 
             services.AddScoped<IBookService, BookService>();
 
-            services.AddScoped<ISeedService, SeedService>();
-
             services.AddSingleton<ICurrentTime, CurrentTime>();
 
             return services;

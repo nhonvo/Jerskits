@@ -19,7 +19,7 @@ public static class ConfigureServices
         else
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(configuration.ConnectionStrings.DefaultConnection));
+                options.UseNpgsql(configuration.ConnectionStrings.DefaultConnection));
         }
 
         // register services

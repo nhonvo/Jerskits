@@ -17,7 +17,7 @@ namespace ecommerce.Web.Extensions
             return builder.Build();
         }
 
-        public static async Task<WebApplication> ConfigurePipelineAsync(this WebApplication app, AppSettings configuration)
+        public static WebApplication ConfigurePipeline(this WebApplication app, AppSettings configuration)
         {
             using var loggerFactory = LoggerFactory.Create(builder =>
             {
@@ -29,15 +29,9 @@ namespace ecommerce.Web.Extensions
                 var initialize = scope.ServiceProvider.GetRequiredService<ApplicationDbContextInitializer>();
                 // await initialize.InitializeAsync();
             }
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-            }
 
             app.UseSwagger();
             app.UseSwaggerUI();
-
-            app.UseCors("_myAllowSpecificOrigins");
 
             app.UseMiddleware<GlobalExceptionMiddleware>();
 

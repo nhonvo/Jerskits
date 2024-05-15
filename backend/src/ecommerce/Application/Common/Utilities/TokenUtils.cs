@@ -15,9 +15,8 @@ namespace ecommerce.Application.Common.Utilities
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var claims = new[]
             {
-                new Claim("ID", user.Id.ToString()),
-                new Claim("Email", user.Email!),
-                new Claim(JwtRegisteredClaimNames.Name, user.UserName!),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.Role.ToString())
             };
 

@@ -7,7 +7,7 @@ namespace ecommerce.Web.Validations
     {
         public LoginRequestValidation()
         {
-            RuleFor(x => x.UserName).NotEmpty().MaximumLength(100);
+            RuleFor(x => x.Email).NotEmpty().MaximumLength(100);
         }
     }
 }
