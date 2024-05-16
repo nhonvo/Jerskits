@@ -29,7 +29,7 @@ namespace ecommerce.Web
             // Extension classes
             services.AddHealthChecks();
             services.AddCompressionCustom();
-            // services.AddCorsCustom();
+            services.AddCorsCustom();
             services.AddHttpClient();
             services.AddSwaggerCustom();
             services.AddJWTCustom(configuration);

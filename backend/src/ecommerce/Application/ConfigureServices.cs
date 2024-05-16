@@ -11,6 +11,8 @@ namespace ecommerce.Application
 
             services.AddSingleton<ICurrentTime, CurrentTime>();
 
+            services.AddScoped<ILocationService, LocationService>();
+
             return services;
         }
     }

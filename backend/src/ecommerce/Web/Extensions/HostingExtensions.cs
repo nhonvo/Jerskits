@@ -27,7 +27,7 @@ namespace ecommerce.Web.Extensions
             if (!configuration.UseInMemoryDatabase)
             {
                 var initialize = scope.ServiceProvider.GetRequiredService<ApplicationDbContextInitializer>();
-                // await initialize.InitializeAsync();
+                // initialize.InitializeAsync();
             }
 
             app.UseSwagger();
@@ -37,6 +37,10 @@ namespace ecommerce.Web.Extensions
 
             app.UseMiddleware<PerformanceMiddleware>();
 
+            app.UseMiddleware<LoggingMiddleware>();
+
+            app.UseCors("AllowSpecificOrigin");
+
             app.UseResponseCompression();
 
             app.UseResponseCompression();
@@ -44,8 +48,6 @@ namespace ecommerce.Web.Extensions
             app.UseHttpsRedirection();
 
             app.ConfigureHealthCheck();
-
-            app.UseMiddleware<LoggingMiddleware>();
 
             app.ConfigureExceptionHandler(loggerFactory.CreateLogger("Exceptions"));
 

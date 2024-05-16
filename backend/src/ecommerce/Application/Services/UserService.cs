@@ -6,7 +6,6 @@ using ecommerce.Application.Common.Exceptions;
 using ecommerce.Application.Common.Interfaces;
 using ecommerce.Application.Common.Models.User;
 using ecommerce.Application.Common.Utilities;
-using ecommerce.Application.Repositories;
 using ecommerce.Infrastructure.Interface;
 
 namespace ecommerce.Application.Services

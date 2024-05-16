@@ -1,4 +1,5 @@
 using AutoMapper;
+using ecommerce.Application.Common.Models;
 using ecommerce.Application.Common.Models.User;
 
 namespace ecommerce.Application.Common.Mappings;
@@ -13,5 +14,8 @@ public class MapProfile : Profile
 
         CreateMap<User, UserProfile>().ReverseMap();
         CreateMap<User, UserUpdateRequest>().ReverseMap();
+        CreateMap<LocationDTO, Country>().ReverseMap();
+        CreateMap<LocationDTO, State>().ReverseMap();
+        CreateMap<LocationDTO, City>().ReverseMap();
     }
 }

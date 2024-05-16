@@ -4,17 +4,12 @@ namespace ecommerce.Web.Extensions
     {
         public static IServiceCollection AddCorsCustom(this IServiceCollection services)
         {
-        services.AddCors(options =>
-        {
-            options.AddDefaultPolicy(
-                policy =>
-                {
-                    policy.WithOrigins("http://localhost:5173/", "http://localhost:3000")
-                          .AllowAnyHeader()
-                          .AllowAnyMethod();
-                });
-        });
-            return services;
+            return services.AddCors(options => options.AddPolicy("AllowSpecificOrigin",
+                 builder => builder
+                     .WithOrigins("http://localhost:5173")
+                     .AllowCredentials() // Allow credentials
+                     .AllowAnyHeader()
+                     .AllowAnyMethod()));
         }
     }
 }
