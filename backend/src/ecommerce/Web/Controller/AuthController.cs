@@ -12,13 +12,13 @@ namespace ecommerce.Web.Controller
 
         [HttpPost("sign-in")]
         public async Task<IActionResult> Authenticate(LoginRequest request)
-            => Ok(await _userService.Authenticate(request));
+            => Ok(await _userService.SignIn(request));
 
         [HttpPost("sign-up")]
         public async Task<IActionResult> Register(RegisterRequest request, CancellationToken token)
-            => Ok(await _userService.Register(request, token));
+            => Ok(await _userService.SignUp(request, token));
 
-        [HttpGet("logout")]
+        [HttpDelete("logout")]
         public IActionResult Logout()
         {
             _userService.Logout();
@@ -27,7 +27,7 @@ namespace ecommerce.Web.Controller
 
         [HttpGet("refresh")]
         public async Task<IActionResult> RefreshToken()
-            => Ok(await _userService.Refresh());
+            => Ok(await _userService.RefreshToken());
     }
 
     public class UserController(IUserService userWriteService) : BaseController
@@ -35,7 +35,7 @@ namespace ecommerce.Web.Controller
         private readonly IUserService _userService = userWriteService;
         [HttpGet]
         public async Task<IActionResult> Get()
-            => Ok(await _userService.Get());
+            => Ok(await _userService.GetProfile());
         [HttpPatch("/api/profile")]
         public async Task<IActionResult> Update(UserUpdateRequest request, CancellationToken cancellationToken)
         {
@@ -44,7 +44,7 @@ namespace ecommerce.Web.Controller
         }
         [HttpGet("/api/profile")]
         public async Task<IActionResult> Profile()
-            => Ok(await _userService.Get());
+            => Ok(await _userService.GetProfile());
     }
     public class ProductsController(ApplicationDbContext context) : BaseController
     {

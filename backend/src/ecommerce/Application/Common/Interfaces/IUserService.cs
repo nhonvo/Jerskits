@@ -1,14 +1,15 @@
+using ecommerce.Application.Common.Models.Response;
 using ecommerce.Application.Common.Models.User;
 
 namespace ecommerce.Application.Common.Interfaces
 {
     public interface IUserService
     {
-        Task<UserDTO> Authenticate(LoginRequest request);
-        Task<UserDTO> Register(RegisterRequest request, CancellationToken token);
+        public Task<ResultResponse<SignInResponse>> SignIn(LoginRequest request);
+        Task<UserDTO> SignUp(RegisterRequest request, CancellationToken token);
         void Logout();
-        Task<string> Refresh();
-        Task<UserProfile> Get();
+        Task<string> RefreshToken();
+        Task<ResultResponse<UserProfileResponse>> GetProfile();
         Task Update(UserUpdateRequest request, CancellationToken cancellationToken);
     }
 }

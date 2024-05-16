@@ -1,9 +1,8 @@
 using System.Security.Claims;
-using System.Text.Json;
 using AutoMapper;
-using ecommerce.Application.Common;
 using ecommerce.Application.Common.Exceptions;
 using ecommerce.Application.Common.Interfaces;
+using ecommerce.Application.Common.Models.Response;
 using ecommerce.Application.Common.Models.User;
 using ecommerce.Application.Common.Utilities;
 using ecommerce.Infrastructure.Interface;
@@ -12,23 +11,20 @@ namespace ecommerce.Application.Services
 {
     public class UserService(IUnitOfWork unitOfWork,
                              IMapper mapper,
-                             ICurrentTime currentTime,
-                             AppSettings configuration,
-                             ILoggerFactory logger,
                              IHttpContextAccessor httpContextAccessor,
-                             IUserRepository userRepository) : IUserService
+                             IUserRepository userRepository,
+                             ICurrentUser currentUser,
+                             ITokenService tokenService) : IUserService
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMapper _mapper = mapper;
-        private readonly ICurrentTime _currentTime = currentTime;
-        private readonly AppSettings _configuration = configuration;
         private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
-        private readonly ILogger _logger = logger.CreateLogger<UserService>();
         private readonly IUserRepository _userRepository = userRepository;
+        private readonly ICurrentUser _currentUser = currentUser;
+        private readonly ITokenService _tokenService = tokenService;
 
-        public async Task<UserDTO> Authenticate(LoginRequest request)
+        public async Task<ResultResponse<SignInResponse>> SignIn(LoginRequest request)
         {
-            _logger.LogInformation("Request: " + JsonSerializer.Serialize(request));
 
             var isUserExist = await _unitOfWork.UserRepository.AnyAsync(x => x.Email == request.Email);
             if (!isUserExist)
@@ -43,13 +39,7 @@ namespace ecommerce.Application.Services
                 throw new UserFriendlyException(ErrorCode.BadRequest, "Password Incorrect!");
             }
 
-            var token = user.Authenticate(
-                _configuration.Jwt.Issuer,
-                _configuration.Jwt.Audience,
-                _configuration.Jwt.Key,
-                _currentTime);
-            var response = _mapper.Map<UserDTO>(user);
-            response.Token = token;
+            var token = _tokenService.GenerateToken(user);
             // Set cookies
             _httpContextAccessor.HttpContext.Response.Cookies.Append("acc", token, new CookieOptions
             {
@@ -58,8 +48,12 @@ namespace ecommerce.Application.Services
                 Secure = true, // Set to true if using HTTPS
                 MaxAge = TimeSpan.FromMinutes(30)
             });
-
-            _logger.LogInformation("Response: " + JsonSerializer.Serialize(response));
+            var response = new ResultResponse<SignInResponse>
+            {
+                error = false,
+                message = "Welcome back!",
+                data = _mapper.Map<SignInResponse>(user)
+            };
 
             return response;
         }
@@ -79,7 +73,7 @@ namespace ecommerce.Application.Services
             }
         }
 
-        public async Task<UserProfile> Get()
+        public async Task<ResultResponse<UserProfileResponse>> GetProfile()
         {
             try
             {
@@ -88,13 +82,14 @@ namespace ecommerce.Application.Services
                 {
                     throw new UserFriendlyException(ErrorCode.Unauthorized, "user not logged in");
                 }
-                var token = jwtCookie.Validate(_configuration.Jwt.Issuer,
-                    _configuration.Jwt.Audience,
-                    _configuration.Jwt.Key);
+                var token = _tokenService.ValidateToken(jwtCookie);
                 var userId = token.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
                 var user = await _userRepository.GetByIdAsync(int.Parse(userId));
 
-                var result = _mapper.Map<UserProfile>(user);
+                var result = new ResultResponse<UserProfileResponse>{
+                    error = false,
+                    data =  _mapper.Map<UserProfileResponse>(user)
+                };
                 return result;
             }
             catch (Exception exception)
@@ -103,26 +98,14 @@ namespace ecommerce.Application.Services
             }
         }
 
-        public async Task<string> Refresh()
+        public async Task<string> RefreshToken()
         {
             try
             {
-                var jwtCookie = _httpContextAccessor.HttpContext.Request.Cookies["acc"];
-                if (string.IsNullOrEmpty(jwtCookie))
-                {
-                    throw new UserFriendlyException(ErrorCode.Unauthorized, "user not logged in");
-                }
-                var token = jwtCookie.Validate(_configuration.Jwt.Issuer,
-                    _configuration.Jwt.Audience,
-                    _configuration.Jwt.Key);
-                var userId = token.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
-                var user = await _userRepository.GetByIdAsync(int.Parse(userId));
+                var user = await _userRepository.GetByIdAsync(_currentUser.GetCurrentUserId());
 
-                var accessToken = user.Authenticate(
-                                _configuration.Jwt.Issuer,
-                                _configuration.Jwt.Audience,
-                                _configuration.Jwt.Key,
-                                _currentTime);
+                var accessToken = _tokenService.GenerateToken(user);
+
                 _httpContextAccessor.HttpContext.Response.Cookies.Append("ref", accessToken, new CookieOptions
                 {
                     HttpOnly = true,
@@ -138,25 +121,17 @@ namespace ecommerce.Application.Services
             }
         }
 
-        public async Task<UserDTO> Register(RegisterRequest request, CancellationToken token)
+        public async Task<UserDTO> SignUp(RegisterRequest request, CancellationToken token)
         {
-            _logger.LogInformation("Request: " + JsonSerializer.Serialize(request));
-
             var isUserExist = await _unitOfWork.UserRepository.AnyAsync(x => x.Email == request.Email);
             if (isUserExist)
                 throw new UserFriendlyException(ErrorCode.BadRequest, "This Email Already Used!");
-
-            var isEmailExist = await _unitOfWork.UserRepository.AnyAsync(x => x.Email == request.Email);
-            if (isEmailExist)
-                throw new UserFriendlyException(ErrorCode.BadRequest, "This Email Already Used");
-
 
             var user = _mapper.Map<User>(request);
             user.Password = user.Password.Hash();
             await _unitOfWork.ExecuteTransactionAsync(async () => await _unitOfWork.UserRepository.AddAsync(user), token);
 
             var response = _mapper.Map<UserDTO>(user);
-            _logger.LogInformation("Response: " + JsonSerializer.Serialize(response));
 
             return response;
         }
@@ -173,9 +148,8 @@ namespace ecommerce.Application.Services
                 throw new UserFriendlyException(ErrorCode.Unauthorized, "user not logged in", $"Access token not found in cookies{exception.Message}");
             }
 
-            var token = jwtCookie.Validate(_configuration.Jwt.Issuer,
-                _configuration.Jwt.Audience,
-                _configuration.Jwt.Key);
+            var token = _tokenService.ValidateToken(jwtCookie);
+
             var userId = token.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
             var user = await _userRepository.GetByIdAsync(int.Parse(userId));
             _mapper.Map(request, user);
