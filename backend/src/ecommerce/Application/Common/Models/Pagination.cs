@@ -4,7 +4,7 @@ namespace ecommerce.Application.Common.Models
     {
         public int TotalItemsCount { get; set; }
         public int PageSize { get; set; }
-        public int TotalPagesCount
+        public int TotalPages
         {
             get
             {
@@ -12,13 +12,9 @@ namespace ecommerce.Application.Common.Models
                 return TotalItemsCount % PageSize == 0 ? temp : temp;
             }
         }
-        public int PageIndex { get; set; }
-
-        /// <summary>
-        /// page number start from 0
-        /// </summary>
-        public bool Next => PageIndex + 1 < TotalPagesCount;
-        public bool Previous => PageIndex > 0;
+        public int CurrentPage { get; set; }
+        public bool Next => CurrentPage + 1 < TotalPages;
+        public bool Previous => CurrentPage > 0;
         public ICollection<T>? Items { get; set; }
     }
 }

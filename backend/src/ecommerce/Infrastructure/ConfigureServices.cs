@@ -24,6 +24,7 @@ public static class ConfigureServices
 
         // register services
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<ApplicationDbContextInitializer>();
 

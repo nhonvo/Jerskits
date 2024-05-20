@@ -18,6 +18,7 @@ namespace ecommerce.Infrastructure
         // repositories
 
         public IUserRepository UserRepository { get; }
+        public IProductRepository ProductRepository { get; }
         //
         public UnitOfWork(ApplicationDbContext dbContext)
         {
@@ -25,6 +26,7 @@ namespace ecommerce.Infrastructure
             // repositories
 
             UserRepository = new UserRepository(_context);
+            ProductRepository = new ProductRepository(_context);
         }
 
         // save changes

@@ -46,12 +46,16 @@ namespace ecommerce.Web.Controller
         public async Task<IActionResult> Profile()
             => Ok(await _userService.GetProfile());
     }
-    public class ProductsController(ApplicationDbContext context) : BaseController
+    public class ProductsController(IProductService productService) : BaseController
     {
-        private readonly ApplicationDbContext _context = context;
+        private readonly IProductService _productService = productService;
 
         [HttpGet]
-        public async Task<IActionResult> Get()
-            => Ok(await _context.Products.ToListAsync());
+        public async Task<IActionResult> Get(int? pageIndex, int? pageSize)
+            => Ok(await _productService.Get(pageIndex, pageSize));
+
+        [HttpGet("search")]
+        public async Task<IActionResult> Search(string q)
+            => Ok(await _productService.Search(q));
     }
 }

@@ -86,9 +86,10 @@ namespace ecommerce.Application.Services
                 var userId = token.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
                 var user = await _userRepository.GetByIdAsync(int.Parse(userId));
 
-                var result = new ResultResponse<UserProfileResponse>{
+                var result = new ResultResponse<UserProfileResponse>
+                {
                     error = false,
-                    data =  _mapper.Map<UserProfileResponse>(user)
+                    data = _mapper.Map<UserProfileResponse>(user)
                 };
                 return result;
             }

@@ -10,6 +10,7 @@ namespace ecommerce.Application
         public static IServiceCollection AddApplicationService(this IServiceCollection services)
         {
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ILocationService, LocationService>();
 
             services.AddSingleton<ICurrentTime, CurrentTime>();

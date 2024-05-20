@@ -47,7 +47,7 @@ namespace ecommerce.Application.Repositories
 
             var result = new Pagination<T>()
             {
-                PageIndex = pageIndex,
+                CurrentPage = pageIndex,
                 PageSize = pageSize,
                 TotalItemsCount = itemCount,
                 Items = items,
@@ -70,7 +70,7 @@ namespace ecommerce.Application.Repositories
 
             var result = new Pagination<T>()
             {
-                PageIndex = pageIndex,
+                CurrentPage = pageIndex,
                 PageSize = pageSize,
                 TotalItemsCount = itemCount,
                 Items = items,
