@@ -1,9 +1,9 @@
 using System.Linq.Expressions;
 using ecommerce.Application.Common.Models;
+using ecommerce.Domain.Constants;
 using ecommerce.Infrastructure.Data;
 using ecommerce.Infrastructure.Interface;
 using Microsoft.EntityFrameworkCore;
-using static ecommerce.Domain.Constant;
 
 namespace ecommerce.Application.Repositories;
 

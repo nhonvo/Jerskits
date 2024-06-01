@@ -1,16 +1,12 @@
 namespace ecommerce.Domain;
 
-public static class Constant
+public static partial class Constant
 {
     public static class Application
     {
         public static string Name = "ecommerce";
     }
-    public static class ErrorMessage
-    {
-        public static string NotFoundMessage = "Could not find";
-        public static string AppConfigurationMessage = "AppConfiguration cannot be null";
-    }
+    
     public static class SeedingMessage
     {
         public static string SeedDataSuccessMessage = "Seed data successfully";
@@ -27,4 +23,5 @@ public static class Constant
         public const string GENERAL_ERROR = "general_error";
         public const string UNPROCESSABLE_ENTITY = "unprocessable_entity";
     }
+
 }

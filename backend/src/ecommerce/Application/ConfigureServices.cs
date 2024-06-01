@@ -15,6 +15,7 @@ public static class ConfigureServices
 
         services.AddSingleton<ICurrentTime, CurrentTime>();
         services.AddSingleton<ITokenService, TokenService>();
+        services.AddSingleton<ICookieService, CookieService>();
         services.AddSingleton<ICurrentUser, CurrentUser>();
         return services;
     }
