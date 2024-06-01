@@ -4,60 +4,59 @@ using ecommerce.Infrastructure;
 using ecommerce.Infrastructure.Data;
 using ecommerce.Web.Middlewares;
 
-namespace ecommerce.Web.Extensions
+namespace ecommerce.Web.Extensions;
+
+public static class HostingExtensions
 {
-    public static class HostingExtensions
+    public static WebApplication ConfigureServices(this WebApplicationBuilder builder, AppSettings configuration)
     {
-        public static WebApplication ConfigureServices(this WebApplicationBuilder builder, AppSettings configuration)
-        {
-            builder.Services.AddInfrastructuresService(configuration);
-            builder.Services.AddApplicationService();
-            builder.Services.AddWebAPIService(configuration);
+        builder.Services.AddInfrastructuresService(configuration);
+        builder.Services.AddApplicationService();
+        builder.Services.AddWebAPIService(configuration);
 
-            return builder.Build();
+        return builder.Build();
+    }
+
+    public static async Task<WebApplication> ConfigurePipeline(this WebApplication app, AppSettings configuration)
+    {
+        using var loggerFactory = LoggerFactory.Create(builder =>
+        {
+
+        });
+        using var scope = app.Services.CreateScope();
+        if (!configuration.UseInMemoryDatabase)
+        {
+            var initialize = scope.ServiceProvider.GetRequiredService<ApplicationDbContextInitializer>();
+            await initialize.InitializeAsync();
         }
 
-        public static async Task<WebApplication> ConfigurePipeline(this WebApplication app, AppSettings configuration)
-        {
-            using var loggerFactory = LoggerFactory.Create(builder =>
-            {
+        app.UseSwagger();
+        app.UseSwaggerUI();
 
-            });
-            using var scope = app.Services.CreateScope();
-            if (!configuration.UseInMemoryDatabase)
-            {
-                var initialize = scope.ServiceProvider.GetRequiredService<ApplicationDbContextInitializer>();
-                await initialize.InitializeAsync();
-            }
+        app.UseMiddleware<GlobalExceptionMiddleware>();
 
-            app.UseSwagger();
-            app.UseSwaggerUI();
+        app.UseMiddleware<PerformanceMiddleware>();
 
-            app.UseMiddleware<GlobalExceptionMiddleware>();
+        app.UseMiddleware<LoggingMiddleware>();
 
-            app.UseMiddleware<PerformanceMiddleware>();
+        app.UseCors("AllowSpecificOrigin");
 
-            app.UseMiddleware<LoggingMiddleware>();
+        app.UseResponseCompression();
 
-            app.UseCors("AllowSpecificOrigin");
+        app.UseResponseCompression();
 
-            app.UseResponseCompression();
+        app.UseHttpsRedirection();
 
-            app.UseResponseCompression();
+        app.ConfigureHealthCheck();
 
-            app.UseHttpsRedirection();
+        app.ConfigureExceptionHandler(loggerFactory.CreateLogger("Exceptions"));
 
-            app.ConfigureHealthCheck();
+        app.UseAuthentication();
 
-            app.ConfigureExceptionHandler(loggerFactory.CreateLogger("Exceptions"));
+        app.UseAuthorization();
 
-            app.UseAuthentication();
+        app.MapControllers();
 
-            app.UseAuthorization();
-
-            app.MapControllers();
-
-            return app;
-        }
+        return app;
     }
 }

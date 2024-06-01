@@ -1,8 +1,7 @@
-namespace ecommerce.Domain.Enums
+namespace ecommerce.Domain.Enums;
+
+public enum Role
 {
-    public enum Role
-    {
-        Admin,
-        User
-    }
+    Admin,
+    User
 }

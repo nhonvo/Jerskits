@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using ecommerce.Application.Common;
 using ecommerce.Application.Common.Exceptions;
 using ecommerce.Application.Common.Interfaces;
 

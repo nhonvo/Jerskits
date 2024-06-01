@@ -1,10 +1,9 @@
 using System.Security.Claims;
 
-namespace ecommerce.Application.Common.Interfaces
+namespace ecommerce.Application.Common.Interfaces;
+
+public interface ITokenService
 {
-    public interface ITokenService
-    {
-        public string GenerateToken(User user);
-        public ClaimsPrincipal ValidateToken(string token);
-    }
+    public string GenerateToken(User user);
+    public ClaimsPrincipal ValidateToken(string token);
 }

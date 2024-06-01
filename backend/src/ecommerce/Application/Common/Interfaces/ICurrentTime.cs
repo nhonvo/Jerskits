@@ -1,7 +1,6 @@
-namespace ecommerce.Application.Common.Interfaces
+namespace ecommerce.Application.Common.Interfaces;
+
+public interface ICurrentTime
 {
-    public interface ICurrentTime
-    {
-        public DateTime GetCurrentTime();
-    }
+    public DateTime GetCurrentTime();
 }

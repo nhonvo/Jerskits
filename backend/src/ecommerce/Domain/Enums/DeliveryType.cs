@@ -1,8 +1,7 @@
-namespace ecommerce.Domain.Enums
+namespace ecommerce.Domain.Enums;
+
+public enum DeliveryType
 {
-    public enum DeliveryType
-    {
-        standard,
-        express
-    }
+    standard,
+    express
 }

@@ -1,8 +1,7 @@
-namespace ecommerce.Domain.Enums
+namespace ecommerce.Domain.Enums;
+
+public enum ProductType
 {
-    public enum ProductType
-    {
-        football,
-        basketball
-    }
+    football,
+    basketball
 }

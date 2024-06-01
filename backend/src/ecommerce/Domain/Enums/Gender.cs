@@ -1,9 +1,8 @@
-namespace ecommerce.Domain.Enums
+namespace ecommerce.Domain.Enums;
+
+public enum Gender
 {
-    public enum Gender
-    {
-        men,
-        women,
-        kid
-    }
+    men,
+    women,
+    kid
 }

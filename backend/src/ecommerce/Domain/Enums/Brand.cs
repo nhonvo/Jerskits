@@ -1,9 +1,8 @@
-namespace ecommerce.Domain.Enums
+namespace ecommerce.Domain.Enums;
+
+public enum Brand
 {
-    public enum Brand
-    {
-        nike,
-        adidas,
-        jordan
-    }
+    nike,
+    adidas,
+    jordan
 }
