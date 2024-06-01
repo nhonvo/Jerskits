@@ -8,6 +8,6 @@ var configuration = builder.Configuration.Get<AppSettings>()
 
 builder.Services.AddSingleton(configuration);
 
-var app = builder.ConfigureServices(configuration).ConfigurePipeline(configuration);
+var app = await builder.ConfigureServices(configuration).ConfigurePipeline(configuration);
 
 await app.RunAsync();

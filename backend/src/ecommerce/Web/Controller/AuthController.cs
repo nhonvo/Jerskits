@@ -1,8 +1,6 @@
 using ecommerce.Application.Common.Interfaces;
 using ecommerce.Application.Common.Models.User;
-using ecommerce.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace ecommerce.Web.Controller
 {

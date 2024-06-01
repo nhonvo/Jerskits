@@ -17,7 +17,7 @@ namespace ecommerce.Web.Extensions
             return builder.Build();
         }
 
-        public static WebApplication ConfigurePipeline(this WebApplication app, AppSettings configuration)
+        public static async Task<WebApplication> ConfigurePipeline(this WebApplication app, AppSettings configuration)
         {
             using var loggerFactory = LoggerFactory.Create(builder =>
             {
@@ -27,7 +27,7 @@ namespace ecommerce.Web.Extensions
             if (!configuration.UseInMemoryDatabase)
             {
                 var initialize = scope.ServiceProvider.GetRequiredService<ApplicationDbContextInitializer>();
-                // initialize.InitializeAsync();
+                await initialize.InitializeAsync();
             }
 
             app.UseSwagger();
