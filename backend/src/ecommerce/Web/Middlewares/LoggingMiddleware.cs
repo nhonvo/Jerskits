@@ -1,25 +1,33 @@
 using ecommerce.Application.Common;
 using ecommerce.Application.Common.Utilities;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace ecommerce.Web.Middlewares;
 
-public class LoggingMiddleware(RequestDelegate next, ILoggerFactory loggerFactory, AppSettings appSettings)
+public class LoggingMiddleware
 {
-    private readonly RequestDelegate _next = next;
-    private readonly ILogger _logger = loggerFactory
-                  .CreateLogger<LoggingMiddleware>();
-    private readonly AppSettings _appSettings = appSettings;
+    private readonly RequestDelegate _next;
+    private readonly ILogger _logger;
+    private readonly AppSettings _appSettings;
+
+    public LoggingMiddleware(RequestDelegate next, ILoggerFactory loggerFactory, AppSettings appSettings)
+    {
+        _next = next;
+        _logger = loggerFactory.CreateLogger<LoggingMiddleware>();
+        _appSettings = appSettings;
+    }
 
     public async Task InvokeAsync(HttpContext context)
     {
         if (_appSettings.Logging.RequestResponse.IsEnabled)
         {
-            bool IsValidFormatRequest = await LogRequest(context);
-            // return false if request json is wrong format
-            // return true if request json is correct format
-            // run next middleware and ignore response log if request json is wrong format
-            if (!IsValidFormatRequest)
+            bool isValidFormatRequest = await LogRequest(context);
+
+            if (!isValidFormatRequest)
                 await _next(context);
             else
                 await LogResponse(context);
@@ -33,23 +41,30 @@ public class LoggingMiddleware(RequestDelegate next, ILoggerFactory loggerFactor
     private async Task<bool> LogRequest(HttpContext context)
     {
         context.Request.EnableBuffering();
-        using MemoryStream memStream = new MemoryStream();
-        context.Request.Body.Position = 0;
+        using var memStream = new MemoryStream();
         await context.Request.Body.CopyToAsync(memStream);
         memStream.Seek(0, SeekOrigin.Begin);
-        using var reader = new StreamReader(memStream);
-        var requestAsText = await reader.ReadToEndAsync();
+
+        var requestAsText = await new StreamReader(memStream).ReadToEndAsync();
         context.Request.Body.Position = 0;
-        var path = context.Request.Path.ToString();
 
         try
         {
-            ExecuteLogRequest("Request", logString: JsonConvert.SerializeObject(JsonConvert.DeserializeObject(requestAsText)));
+            if (context.Request.ContentType != null && context.Request.ContentType.Contains("multipart/form-data"))
+            {
+                ExecuteLogRequest(context.Request.Path, "Multipart form-data content");
+                return false;
+            }
+            else
+            {
+                var requestJson = JsonConvert.SerializeObject(JsonConvert.DeserializeObject(requestAsText));
+                ExecuteLogRequest("Request", requestJson);
+            }
         }
         catch (Exception exception)
         {
-            ExecuteLogRequest("Request", logString: requestAsText.Replace(System.Environment.NewLine, string.Empty));
-            _logger.LogError($"Exception:{exception}");
+            ExecuteLogRequest("Request", requestAsText.Replace(System.Environment.NewLine, string.Empty));
+            _logger.LogError($"Exception while logging request: {exception}");
             return false;
         }
 
@@ -66,19 +81,20 @@ public class LoggingMiddleware(RequestDelegate next, ILoggerFactory loggerFactor
         var originalBodyStream = context.Response.Body;
         using var responseBody = new MemoryStream();
         context.Response.Body = responseBody;
+
         await _next(context);
+
         context.Response.Body.Seek(0, SeekOrigin.Begin);
-        using var reader = new StreamReader(context.Response.Body);
-        var responseAsText = await reader.ReadToEndAsync();
+        var responseAsText = await new StreamReader(context.Response.Body).ReadToEndAsync();
         context.Response.Body.Seek(0, SeekOrigin.Begin);
-        var path = context.Request.Path.ToString();
 
         LogHelper.LogResponse(
-            _logger, "Response",
-            JsonConvert.SerializeObject(responseAsText),
+            _logger,
+            "Response",
+            responseAsText,
             context.Response.StatusCode,
             _appSettings.Logging.RequestResponse.IsEnabled
-            );
+        );
 
         await responseBody.CopyToAsync(originalBodyStream);
     }

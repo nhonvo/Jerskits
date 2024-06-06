@@ -8,8 +8,6 @@ using ecommerce.Domain.Constants;
 using ecommerce.Infrastructure.Interface;
 
 namespace ecommerce.Application.Services;
-
-
 public class UserService(IUnitOfWork unitOfWork,
                          IMapper mapper,
                          ITokenService tokenService,
@@ -104,5 +102,15 @@ public class UserService(IUnitOfWork unitOfWork,
 
         await _unitOfWork.ExecuteTransactionAsync(() =>
             _unitOfWork.UserRepository.Update(user), cancellationToken);
+    }
+
+    public async Task<UploadAvatarResponse> UploadAvatar(IFormFile file)
+    {
+
+        return new UploadAvatarResponse
+        {
+            error = false,
+            avatar = "Avatar uploaded successfully!"
+        };
     }
 }

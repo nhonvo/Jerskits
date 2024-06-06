@@ -12,6 +12,7 @@ public static class ConfigureServices
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<ILocationService, LocationService>();
+        services.AddScoped<IPhotoService, PhotoService>();
 
         services.AddSingleton<ICurrentTime, CurrentTime>();
         services.AddSingleton<ITokenService, TokenService>();

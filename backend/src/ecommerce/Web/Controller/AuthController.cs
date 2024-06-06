@@ -28,9 +28,11 @@ public class AuthController(IUserService userWriteService) : BaseController
         => Ok(await _userService.RefreshToken());
 }
 
-public class UserController(IUserService userWriteService) : BaseController
+public class UserController(IUserService userWriteService, IPhotoService photoService) : BaseController
 {
     private readonly IUserService _userService = userWriteService;
+    private readonly IPhotoService _photoService = photoService;
+
     [HttpGet]
     public async Task<IActionResult> Get()
         => Ok(await _userService.GetProfile());
@@ -43,6 +45,30 @@ public class UserController(IUserService userWriteService) : BaseController
     [HttpGet("/api/profile")]
     public async Task<IActionResult> Profile()
         => Ok(await _userService.GetProfile());
+
+    [HttpPut("api/profile/avatar")]
+    public async Task<IActionResult> UploadAvatar(IFormFile file)
+        => Ok(await _userService.UploadAvatar(file));
+    [HttpPost("/photo")]
+    public async Task<IActionResult> Up(IFormFile file)
+    {
+        var photo = await _photoService.AddPhotoAsync(file);
+        return Ok(photo);
+    }
+
+    [HttpGet("/photo/{id}")]
+    public IActionResult Get(string id)
+    {
+        var photo = _photoService.GetPhoto(id);
+        return Ok(photo);
+    }
+
+    [HttpDelete("/photo/{id}")]
+    public async Task<IActionResult> Delete(string id)
+    {
+        var photo = await _photoService.DeletePhotoAsync(id);
+        return Ok(photo);
+    }
 }
 public class ProductsController(IProductService productService) : BaseController
 {

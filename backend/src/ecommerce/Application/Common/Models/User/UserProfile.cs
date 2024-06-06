@@ -1,5 +1,4 @@
 namespace ecommerce.Application.Common.Models.User;
-
 public class UserProfileResponse
 {
     public string FullName { get; set; }
